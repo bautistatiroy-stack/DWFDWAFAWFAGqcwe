@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Panel</title>
+</head>
+
+<body>
+
+    <h2>🛠 Admin Add Product</h2>
+
+    <input id="name" placeholder="Product Name"><br><br>
+    <input id="price" type="number" placeholder="Price"><br><br>
+    <input id="stock" type="number" placeholder="Stock"><br><br>
+    <input id="img" placeholder="Image URL"><br><br>
+
+    <button onclick="addProduct()">Add Product</button>
+
+    <hr>
+
+    <h3>Current Products</h3>
+    <div id="list"></div>
+
+    <script>
+        let products = JSON.parse(localStorage.getItem("products")) || [];
+
+        function addProduct() {
+
+            let name = document.getElementById("name").value;
+            let price = document.getElementById("price").value;
+            let stock = document.getElementById("stock").value;
+            let img = document.getElementById("img").value;
+
+            if (!name || !price || !stock || !img) {
+                alert("Complete all fields!");
+                return;
+            }
+
+            products.push({
+                name: name,
+                price: Number(price),
+                stock: Number(stock),
+                img: img
+            });
+
+            localStorage.setItem("products", JSON.stringify(products));
+
+            alert("Product Added!");
+
+            render();
+
+            document.getElementById("name").value = "";
+            document.getElementById("price").value = "";
+            document.getElementById("stock").value = "";
+            document.getElementById("img").value = "";
+        }
+
+        function render() {
+
+            let html = "";
+
+            products.forEach((p, i) => {
+
+                html += `
+        <div style="padding:10px;border:1px solid #ccc;margin:10px;">
+            
+            <img src="${p.img}" width="80"><br>
+            <b>${p.name}</b><br>
+            ₱${p.price}<br>
+            Stock: ${p.stock}<br><br>
+
+            <button onclick="deleteItem(${i})"
+                style="background:red;color:white;padding:5px;border:none;">
+                Remove
+            </button>
+
+        </div>
+        `;
+            });
+
+            document.getElementById("list").innerHTML = html;
+        }
+
+        /*remOve*/
+        function deleteItem(i) {
+
+            let confirmDelete = confirm("Are you sure you want to delete this item?");
+
+            if (!confirmDelete) return;
+
+            products.splice(i, 1);
+
+            localStorage.setItem("products", JSON.stringify(products));
+
+            render();
+        }
+
+
+        /*edit the STAck*/
+
+
+
+
+        function addProduct() {
+
+            let name = document.getElementById("name").value;
+            let price = document.getElementById("price").value;
+            let stock = document.getElementById("stock").value;
+            let img = document.getElementById("img").value;
+
+            if (!name || !price || !stock || !img) {
+                alert("Complete all fields!");
+                return;
+            }
+
+            products.push({
+                name: name,
+                price: Number(price),
+                stock: Number(stock),
+                img: img
+            });
+
+            localStorage.setItem("products", JSON.stringify(products));
+
+            alert("Product Added!");
+
+            render();
+
+            document.getElementById("name").value = "";
+            document.getElementById("price").value = "";
+            document.getElementById("stock").value = "";
+            document.getElementById("img").value = "";
+        }
+
+        function render() {
+
+            let html = "";
+
+            products.forEach((p, i) => {
+
+                html += `
+        <div style="padding:10px;border:1px solid #ccc;margin:10px;">
+
+            <img src="${p.img}" width="80"><br><br>
+
+            <b>${p.name}</b><br>
+
+            ₱${p.price}<br><br>
+
+            Stock:
+            <input type="number"
+                   value="${p.stock}"
+                   onchange="updateStock(${i}, this.value)">
+            <br><br>
+
+            <button onclick="deleteItem(${i})"
+                style="background:red;color:white;padding:5px;border:none;">
+                Remove
+            </button>
+
+        </div>
+        `;
+            });
+
+            document.getElementById("list").innerHTML = html;
+        }
+
+        function updateStock(i, value) {
+
+            products[i].stock = Number(value);
+
+            localStorage.setItem(
+                "products",
+                JSON.stringify(products)
+            );
+
+            alert("Stock Updated!");
+        }
+
+        function deleteItem(i) {
+
+            let confirmDelete = confirm(
+                "Are you sure you want to delete this item?"
+            );
+
+            if (!confirmDelete) return;
+
+            products.splice(i, 1);
+
+            localStorage.setItem(
+                "products",
+                JSON.stringify(products)
+            );
+
+            render();
+        }
+
+        render();
+    </script>
+
+</body>
+
+</html>

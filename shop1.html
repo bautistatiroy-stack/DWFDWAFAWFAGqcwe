@@ -1,0 +1,147 @@
+<!-- =========================
+FILE 3 = shop.html
+========================= -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Client Shop</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #884d1e;
+            padding: 20px;
+        }
+        
+        .card {
+            background: rgb(131, 121, 121);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            color: aliceblue;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        img {
+            width: 120px;
+            border-radius: 10px;
+        }
+        
+        input {
+            width: 50px;
+            padding: 5px;
+        }
+        
+        button {
+            padding: 8px 15px;
+            border: none;
+            background: #007bff;
+            color: rgba(255, 248, 248, 0.893);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>🛒 Client Shop</h2>
+
+    <button onclick="goCart()">🛒 Check Cart</button>
+
+    <br><br>
+
+    <div id="products"></div>
+
+    <script>
+        let products = JSON.parse(
+            localStorage.getItem("products")
+        ) || [];
+
+        let cart = JSON.parse(
+            localStorage.getItem("cart")
+        ) || [];
+
+        let qty = JSON.parse(
+            localStorage.getItem("qty")
+        ) || [];
+
+        function render() {
+
+            let html = "";
+
+            products.forEach((p, i) => {
+
+                html += `
+        <div class="card">
+
+            <img src="${p.img}">
+
+            <h3>${p.name}</h3>
+
+            <p>Price: ₱${p.price}</p>
+
+            <p>Stock: ${p.stock}</p>
+
+            <p>
+                Quantity:
+                <input type="number"
+                    id="qty${i}"
+                    value="1"
+                    min="1"
+                    max="${p.stock}">
+            </p>
+
+            <button onclick="buy(${i})">
+                Add To Cart
+            </button>
+
+        </div>
+        `;
+            });
+
+            document.getElementById("products").innerHTML = html;
+        }
+
+        function buy(i) {
+
+            let quantity = Number(
+                document.getElementById("qty" + i).value
+            );
+
+            if (quantity > products[i].stock) {
+
+                alert("❌ Not enough stock");
+                return;
+            }
+
+            cart[i] = true;
+
+            qty[i] = quantity;
+
+            localStorage.setItem(
+                "cart",
+                JSON.stringify(cart)
+            );
+
+            localStorage.setItem(
+                "qty",
+                JSON.stringify(qty)
+            );
+
+            alert("✅ Added To Cart");
+
+        }
+
+        function goCart() {
+
+            window.location.href = "dashboard.html";
+        }
+
+        render();
+    </script>
+
+</body>
+
+</html>
