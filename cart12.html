@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Shopping Cart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        /* Grid Layout */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffb347, #ff7b54);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        /* CART GRID */
+        
+        #cart {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            padding-bottom: 120px;
+        }
+        /* CARD */
+        
+        .card {
+            background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, .15);
+            transition: .3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, .25);
+        }
+        
+        .card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background: #f3f3f3;
+        }
+        
+        .content {
+            padding: 20px 1;
+        }
+        
+        .name {
+            font-size: 10px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .price {
+            color: #ff5722;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        /* QUANTITY */
+        
+        .qty {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+        
+        .qty button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            background: #ff9800;
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+            transition: .3s;
+        }
+        
+        .qty button:hover {
+            background: #060400;
+            transform: scale(1.15);
+        }
+        
+        .qty span {
+            font-size: 20px;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        }
+        /* SUBTOTAL */
+        
+        .subtotal {
+            background: #f7f7f7;
+            border-radius: 10px;
+            padding: 5px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        /* REMOVE */
+        
+        .remove {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: #e53935;
+            color: #fff;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .3s;
+        }
+        
+        .remove:hover {
+            background: #c62828;
+        }
+        
+        .back {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            background: #05b6f1;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 999;
+            cursor: pointer;
+        }
+        
+        .checkoutt {
+            position: fixed;
+            bottom: 15px;
+            right: 1px;
+            background: #28a745;
+            color: white;
+            padding: 10px 11px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 999;
+            cursor: pointer;
+        }
+        
+        .total-box {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000;
+            color: white;
+            padding: 10px 11px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 999;
+            cursor: pointer;
+        }
+        
+        .h2 {
+            font-size: 20px;
+            color: white;
+            text-align: center;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #e5963c, #715a04);
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="h2"> Cart</div>
+
+
+    <div class="back" onclick="backShop()">⬅ Back </div>
+
+    <div class="checkoutt" onclick="checkout()">Checkout ➜</div>
+
+
+    <div class="content" id="cart"></div>
+
+    <div class="total-box">
+        <h3>Total ₱<span id="total">0</span></h3>
+    </div>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        function render() {
+
+            let html = "";
+            let total = 0;
+
+            if (cart.length === 0) {
+                document.getElementById("cart").innerHTML = `
+                    <div class="empty">🛒 Your cart is empty</div>
+                `;
+                document.getElementById("total").innerText = 0;
+                return;
+            }
+
+            cart.forEach((item, i) => {
+
+                let subtotal = item.price * item.qty;
+                total += subtotal;
+
+                html += `
+
+<div class="card">
+
+ <img src="${item.img}">
+
+    <div class="content">
+        
+  
+
+        <div class="name">${item.name}</div>
+
+        <div class="price">₱${item.price}</div>
+
+        <div class="qty">
+            <button onclick="minus(${i})">−</button>
+            <span>${item.qty}</span>
+            <button onclick="plus(${i})">+</button>
+        </div>
+
+        <div class="subtotal">
+            Subtotal: ₱${subtotal}
+        </div>
+
+        <button class="remove" onclick="removeItem(${i})">
+            🗑 Remove
+        </button>
+
+    </div>
+
+</div>
+`;
+
+
+
+            });
+
+            document.getElementById("cart").innerHTML = html;
+            document.getElementById("total").innerText = total;
+        }
+
+        function plus(i) {
+            cart[i].qty++;
+            save();
+        }
+
+        function minus(i) {
+            if (cart[i].qty > 1) {
+                cart[i].qty--;
+            }
+            save();
+        }
+
+        function removeItem(i) {
+            cart.splice(i, 1);
+            save();
+        }
+
+        function save() {
+            localStorage.setItem("cart", JSON.stringify(cart));
+            render();
+        }
+
+        function checkout() {
+            if (cart.length == 0) {
+                alert("Cart Empty");
+                return;
+            }
+            window.location = "checkout.html";
+        }
+
+        function backShop() {
+            window.location = "allproduct.html";
+        }
+
+        render();
+    </script>
+
+</body>
+
+</html>
